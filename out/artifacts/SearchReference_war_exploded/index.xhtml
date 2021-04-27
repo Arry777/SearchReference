@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Search links app</title>
+    <link href="sub/css/main.css" rel="stylesheet"/>
+</h:head>
+<h:body>
+    <h:form>
+        <p:graphicImage id="progressbar" src="img/iphone-spinner.gif" style="display:none" />
+        <p:inputText placeholder="put url" value="#{mainBean.enteredLine}" required="true" /><br/>
+        <p:commandButton value="Analise" styleClass="rounded-button" action="#{mainBean.analise}" update="addedUrls"/>
+    </h:form>
+
+    <p:panel header="urls" id="addedUrls">
+        <p:dataTable value="#{mainBean.urls}" var="url" >
+            <p:column><p:outputLabel value="#{mainBean.urls.indexOf(url)+1}" /></p:column>
+            <p:column><p:link href="#{url}" value="#{url}" id="addUrl" /></p:column>
+            <p:column><p:outputLabel value="#{mainBean.names.get(mainBean.urls.indexOf(url))}" /></p:column>
+        </p:dataTable>
+    </p:panel>
+
+    <h:form>
+        <p:commandButton value="Clear" styleClass="rounded-button" action="#{mainBean.clear}" update="addedUrls"/>
+    </h:form>
+
+    <p:ajaxStatus styleClass="preloader">
+        <f:facet name="start">
+            <i class="pi pi-spin pi-spinner loading-icon"/>
+        </f:facet>
+    </p:ajaxStatus>
+
+</h:body>
+</html>

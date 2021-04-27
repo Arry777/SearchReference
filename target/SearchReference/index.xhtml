@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+			xmlns:h="http://java.sun.com/jsf/html"
+			xmlns:f="http://java.sun.com/jsf/core"
+			xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Search reference app</title>
+	<link rel="stylesheet" href="sub/css/main.css" type="text/css" media="all"/>
+	<script type="text/javascript" src="sub/js/main.js"></script>
+</h:head>
+<h:body id="body">
+
+	<!--preloader-->
+	<p:ajaxStatus styleClass="preloader">
+		<f:facet name="start">
+			<i class="pi pi-spin pi-spinner loading-icon"/>
+		</f:facet>
+	</p:ajaxStatus>
+
+	<!--input form-->
+	<h:form id="inputform">
+		<p:outputPanel styleClass="centered" id="inputpanel">
+			<p:inputText styleClass="inpt" id="input" placeholder="Put url"
+									 value="#{mainBean.enteredLine}">
+				<p:ajax event="keyup" update="analise clearform" delay="500"/>
+			</p:inputText>
+			<p:message for="input"/>
+			<p:commandButton id="analise" value="Analise" styleClass="rounded-button btn"
+											 action="#{mainBean.analise}"
+											 update="addedUrls inputpanel"
+											 disabled="#{empty mainBean.enteredLine}"
+			onstart="blackout()" oncomplete="lighten()"/>
+		</p:outputPanel>
+	</h:form>
+
+	<!--generated list-->
+	<p:panel id="addedUrls" styleClass="centered">
+		<f:facet name="header">List of links</f:facet>
+		<p:dataTable value="#{mainBean.urls}" var="url" paginator="true" rows="5"
+								 rowsPerPageTemplate="5,10,{ShowAll|'All'}"
+								 paginatorPosition="bottom">
+
+			<p:column styleClass="centered" headerText="№">
+				<h:outputText value="#{mainBean.urls.indexOf(url)+1}" />
+			</p:column>
+
+			<p:column styleClass="centered" headerText="url">
+				<p:link href="#{url}" value="#{url}" id="addUrl" />
+			</p:column>
+
+			<p:column styleClass="centered" headerText="action">
+				<p:button id="insertbtn" styleClass="ui-button-flat" value="insert"
+									onclick="insert(this); return false;" />
+			</p:column>
+
+		</p:dataTable>
+	</p:panel>
+
+	<!--clear btn-->
+	<h:form id="clearform">
+		<p:commandButton id="clear" value="Clear" styleClass="rounded-button btn" action="#{mainBean.clear}"
+										 update="addedUrls inputform clearform" disabled="#{empty mainBean.enteredLine}"
+										 onclick="resetInput()"/>
+	</h:form>
+</h:body>
+</html>
