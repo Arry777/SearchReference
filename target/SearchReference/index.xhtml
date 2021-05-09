@@ -23,8 +23,7 @@
 	<!--input form-->
 	<h:form id="inputform">
 		<p:outputPanel styleClass="centered" id="inputpanel">
-			<p:inputText styleClass="inpt" id="input" placeholder="Put url"
-									 value="#{mainBean.enteredLine}">
+			<p:inputText styleClass="inpt" id="input" placeholder="Put url" value="#{mainBean.enteredLine}">
 				<p:ajax event="keyup" update="analise clearform" delay="500"/>
 			</p:inputText>
 			<p:message for="input"/>
@@ -32,7 +31,7 @@
 											 action="#{mainBean.analise}"
 											 update="addedUrls inputpanel"
 											 disabled="#{empty mainBean.enteredLine}"
-			onstart="blackout()" oncomplete="lighten()"/>
+											 onstart="blackout()" oncomplete="lighten()"/>
 		</p:outputPanel>
 	</h:form>
 
@@ -63,7 +62,7 @@
 	<h:form id="clearform">
 		<p:commandButton id="clear" value="Clear" styleClass="rounded-button btn" action="#{mainBean.clear}"
 										 update="addedUrls inputform clearform" disabled="#{empty mainBean.enteredLine}"
-										 onclick="resetInput()"/>
+										 resetValues="true"/>
 	</h:form>
 </h:body>
 </html>

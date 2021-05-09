@@ -4,11 +4,6 @@ function insert(obj) {
     document.getElementById('inputform:input').value = document.getElementById(urlId);
 }
 
-//функция очистки текста в value input
-function resetInput() {
-    document.getElementById('inputform:input').value = null;
-}
-
 function blackout() {
     document.getElementById('body').classList.add('overlay');
 }

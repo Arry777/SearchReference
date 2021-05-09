@@ -1,23 +1,23 @@
 package by.sergy.beans;
 
-import by.sergy.constants.Constants;
+import by.sergy.impl.MainInterface;
 import lombok.Data;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
+
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.FacesContext;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 /*
 * Класс является обработчиком одного из основных ивентов, а именно анализа введенной ссылки и выдача
@@ -29,62 +29,38 @@ import java.util.regex.Pattern;
 @ManagedBean
 @SessionScoped
 @Data
-public class MainBean implements Serializable {
+public class MainBean implements Serializable, MainInterface {
     private String enteredLine;
     private List<String> urls = new ArrayList<>();
 
+    @Override
     public void analise() {
-
         urls.clear(); //очистка от предыдущих данных если такие имеются
 
         try {
-            //Создаем объект url из введенной строки для дальнейшего получения html документа
-            //если она выбрасывает exception, блок catch выдает нужный message
-            URL url = new URL(enteredLine);
+//          получаем html документ
+            Document doc = Jsoup.connect(enteredLine).get();
+            Elements elements = doc.select("a");//получаем все элементы <a>...</a>
 
-            URLConnection conn = url.openConnection();//коннект
-            InputStream is = conn.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-
-            String line = br.readLine();
-            StringBuilder html = new StringBuilder();
-
-            while ((line = br.readLine()) != null) { //Заполняем переменную html
-                html.append(line);
-                line = br.readLine();
-            }
-
-            br.close();
-
-            //Объекты паттерна и матчера в данном случае помогут найти
-            //все совпадения '<a href="">...</a>', где мы сможем из
-            //строки html достать нужную группу
-            Pattern pattern = Pattern.compile(Constants.REGEX_A_TAG);
-            Matcher matcher = pattern.matcher(html);
-
-            while (matcher.find()) {//поиск совпадений
-                try {
-                    //здесь мы отсеиваем ссылки которые являются
-                    //частью веток сайта проверяемого html документа
-                    //повторный блок catch игнорирует ее проход и инициализирует лист дальше
-                    new URL(matcher.group(1));
-
-                    if (!urls.contains(matcher.group(1))) {//инициализия листа
-                        urls.add(matcher.group(1));
-                    }
-
-                } catch (MalformedURLException ignored) {}//игнор невалидной ссылки
+            for (Element elem: elements) {
+                //проверяем аттрибут href на пустоту и уникальность в листе
+                if (!elem.absUrl("href").equals("") && !urls.contains(elem.absUrl("href"))) {
+                    urls.add(elem.absUrl("href"));//добавляем в список
+                }
             }
 
         } catch (IOException e) {//введенная ссылка невалидна => push message
+            System.err.println(e.getMessage());
             FacesContext.getCurrentInstance().addMessage("inputform:input",
                     new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "Error", "Error: no valid entered line"));
         }
     }
 
+    @Override
     public void clear() {
         enteredLine = null;
         urls.clear();
     }
+    
 }
