@@ -9,7 +9,6 @@
 <h:head>
 	<title>Search reference app</title>
 	<link rel="stylesheet" href="sub/css/main.css" type="text/css" media="all"/>
-	<script type="text/javascript" src="sub/js/main.js"></script>
 </h:head>
 <h:body id="body">
 
@@ -31,7 +30,8 @@
 											 action="#{mainBean.analise}"
 											 update="addedUrls inputpanel"
 											 disabled="#{empty mainBean.enteredLine}"
-											 onstart="blackout()" oncomplete="lighten()"/>
+											 onstart="document.getElementById('body').classList.add('overlay')"
+											 oncomplete="document.getElementById('body').classList.remove('overlay')"/>
 		</p:outputPanel>
 	</h:form>
 
@@ -52,7 +52,9 @@
 
 			<p:column styleClass="centered" headerText="action">
 				<p:button id="insertbtn" styleClass="ui-button-flat" value="insert"
-									onclick="insert(this); return false;" />
+									onclick="document.getElementById('inputform:input').value =
+									document.getElementById(this.id.match('j_idt[0-9]+:[0-9]+:') + 'addUrl');
+									return false;" />
 			</p:column>
 
 		</p:dataTable>

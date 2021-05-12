@@ -62,5 +62,4 @@ public class MainBean implements Serializable, MainInterface {
         enteredLine = null;
         urls.clear();
     }
-    
 }
